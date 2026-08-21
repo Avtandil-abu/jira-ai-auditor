@@ -1,0 +1,13 @@
+{
+  "name": "jira-ai-auditor",
+  "version": "1.0.0",
+  "description": "Enterprise-grade Jira Project Auditor MCP Server by Avtandil Labs",
+  "main": "index.js",
+  "type": "module",
+  "author": "Avtandil Abuashvili",
+  "license": "Proprietary",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.1",
+    "axios": "^1.19.0"
+  }
+}
