@@ -1,0 +1,10 @@
+კომერციული ლიცენზია / Proprietary License
+
+Copyright (c) 2026 Avtandil Labs. All rights reserved.
+
+This software and associated documentation files are proprietary to Avtandil Labs. 
+Unmodified or modified use, reproduction, distribution, or sub-licensing of this 
+software is strictly prohibited without explicit written permission from Avtandil Labs.
+
+For licensing inquiries or beta access, please complete the official form:
+https://forms.gle
