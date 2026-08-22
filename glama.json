@@ -1,0 +1,6 @@
+{
+  "schemaVersion": "1",
+  "name": "jira-ai-auditor",
+  "description": "Advanced project health auditor for Jira via Claude Desktop",
+  "homepage": "https://vercel.app"
+}
