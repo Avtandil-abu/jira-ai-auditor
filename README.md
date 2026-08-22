@@ -94,6 +94,7 @@ Proprietary — © 2026 Avtandil Labs. All rights reserved.
 
 If this tool provides value to your team and saves your time, consider supporting the development!
 
-[![Ko-fi](https://shields.io)](https://ko-fi.com)
+👉 [Support our work on Ko-fi](https://ko-fi.com)
+
 
 
