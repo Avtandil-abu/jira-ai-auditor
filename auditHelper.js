@@ -15,11 +15,11 @@ export function analyzeAuditData(issues) {
     issues.forEach(issue => {
         const assignee = issue.assignee || "Unassigned";
         const status = issue.status ? issue.status.toLowerCase() : "";
-        const isClosed = status === "done" || status === "closed" || status === "готово";
+        const isClosed = status === "done" || status === "closed";
         const summary = issue.summary ? issue.summary.toLowerCase() : "";
         const priority = issue.priority ? issue.priority.toLowerCase() : "medium";
 
-        // 1. Load Balancing Analysis
+        // 1. Load Balancing
         loadBalancing[assignee] = (loadBalancing[assignee] || 0) + 1;
 
         // 2. Due Date Calculations
@@ -40,13 +40,20 @@ export function analyzeAuditData(issues) {
             issue.daysUntilDue = null;
         }
 
-        // 3. Count Active Unassigned Issues
-        const isActive = status === "in progress" || status === "в процессе проверки" || status === "к выполнению" || status === "в работе" || status === "to do";
+        // 3. Active Unassigned Issues
+        const isActive = status === "in progress" || status === "to do";
         if (assignee === "Unassigned" && isActive) {
             unassignedActiveCount++;
         }
 
-        // 4. Warnings Generation
+        // 4. Reopened Check via Changelog
+        if (issue.changelog && issue.changelog.histories) {
+            issue.isReopened = detectReopenings(issue.id, issue.changelog);
+        } else {
+            issue.isReopened = false;
+        }
+
+        // 5. Warnings
         if (issue.daysOverdue !== null && issue.daysOverdue > 0) {
             overdueCount++;
             warnings.push({
@@ -74,45 +81,43 @@ export function analyzeAuditData(issues) {
             });
         }
 
-        const isBlocked = status.includes("block") || status.includes("დაბლოკილი") || status.includes("review");
+        const isBlocked = status.includes("block");
         const hasNoDescription = !issue.description || issue.description.trim().length < 10;
         if (isBlocked && hasNoDescription) {
             warnings.push({
                 issueId: issue.id,
                 type: "blocked_no_reason",
-                message: `${issue.id} is blocked/in review, but no description or reason provided in Jira`
+                message: `${issue.id} is blocked but has no description or reason provided`
             });
         }
 
-        // 🧠 5. Avtandil-AI ინტელექტუალური Risk Score ალგორითმი (v1.1)
-        let risk = 10; // საბაზისო
+        // 6. Risk Score
+        let risk = 10;
 
-        // პრიორიტეტის ფაქტორი
         if (priority === "highest" || priority === "critical") risk += 30;
         else if (priority === "high") risk += 20;
         else if (priority === "medium") risk += 10;
 
-        // უპატრონო კრიტიკული საქმეები
         if (assignee === "Unassigned" && (priority === "highest" || priority === "high")) risk += 35;
         else if (assignee === "Unassigned") risk += 15;
 
-        // გაჭედილი საქმეები
         if (isBlocked) risk += 25;
 
-        // დედლაინის გადაცილება
-        if (issue.daysOverdue > 0) risk += 30;
+        if (issue.daysOverdue !== null && issue.daysOverdue > 0) risk += 30;
 
-        // 🔥 ტექსტის სემანტიკური ფილტრი (კლოდის შენიშვნის პასუხად!)
-        if (summary.includes("crash") || summary.includes("critical") || summary.includes("emergency") || summary.includes("fail")) {
-            risk += 40; // კატასტროფულად ვუწევთ რისკს საშიში სიტყვების გამო
+        if (
+            summary.includes("crash") ||
+            summary.includes("critical") ||
+            summary.includes("emergency") ||
+            summary.includes("fail")
+        ) {
+            risk += 40;
         }
 
         issue.riskScore = `${Math.min(100, Math.max(0, risk))}%`;
     });
 
-    // 6. Health Score & Breakdown Calculation
-    const baseScore = 100;
-
+    // 7. Health Score
     if (overdueCount > 0) {
         deductions.push({ reason: "Overdue tasks", count: overdueCount, points: -8 * overdueCount });
     }
@@ -124,16 +129,16 @@ export function analyzeAuditData(issues) {
     }
 
     const totalDeduction = deductions.reduce((sum, d) => sum + d.points, 0);
-    let healthScore = Math.max(0, baseScore + totalDeduction);
+    const healthScore = Math.max(0, 100 + totalDeduction);
 
     return {
-        healthScore: healthScore,
+        healthScore,
         scoreBreakdown: deductions,
         totalIssuesChecked: totalIssues,
-        unassignedActiveCount: unassignedActiveCount,
-        warnings: warnings,
+        unassignedActiveCount,
+        warnings,
         workloadDistribution: loadBalancing,
-        issues: issues // ვაბრუნებთ გადამუშავებულ თასქებს რისკებთან ერთად
+        issues
     };
 }
 
@@ -143,13 +148,12 @@ export function detectReopenings(issueKey, changelog) {
     let wasDone = false;
     for (const history of changelog.histories) {
         for (const item of history.items) {
-            if (item.field === 'status') {
+            if (item.field === "status") {
                 const toStatus = item.toString ? item.toString.toLowerCase() : "";
-
-                if (toStatus === 'done' || toStatus === 'готово' || toStatus === 'closed') {
+                if (toStatus === "done" || toStatus === "closed") {
                     wasDone = true;
                 }
-                if (wasDone && (toStatus === 'in progress' || toStatus === 'в работе' || toStatus === 'к выполнению')) {
+                if (wasDone && (toStatus === "in progress" || toStatus === "to do")) {
                     return true;
                 }
             }

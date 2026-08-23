@@ -5,7 +5,7 @@ import {
     ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import axios from "axios";
-import { analyzeAuditData } from "./auditHelper.js"; // აუცილებელი იმპორტი!
+import { analyzeAuditData } from "./auditHelper.js";
 
 const JIRA_DOMAIN = process.env.JIRA_DOMAIN;
 const JIRA_EMAIL = process.env.JIRA_EMAIL;
@@ -57,7 +57,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             params: {
                 jql: jql,
                 maxResults: 50,
-                fields: "summary,status,assignee,reporter,priority,updated,duedate,description"
+                fields: "summary,status,assignee,reporter,priority,updated,duedate,description",
+                expand: "changelog"
             },
             headers: {
                 "Authorization": authHeader,
@@ -69,7 +70,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             return { content: [{ type: "text", text: `No issues found in project ${projectKey}.` }] };
         }
 
-        // ბაზისური მასივის მომზადება დამხმარესთვის
         const baseIssues = response.data.issues.map(issue => ({
             id: issue.key,
             summary: issue.fields?.summary || "",
@@ -79,10 +79,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             priority: issue.fields?.priority?.name || "N/A",
             updated: issue.fields?.updated || "N/A",
             dueDate: issue.fields?.duedate || "No due date",
-            description: issue.fields?.description?.text || ""
+            description: issue.fields?.description?.text || "",
+            changelog: issue.changelog || null
         }));
 
-        // ვიძახებთ თქვენს ნამდვილ ფაილს!
         const auditResult = analyzeAuditData(baseIssues);
 
         return {
