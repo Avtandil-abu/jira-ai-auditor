@@ -83,7 +83,7 @@ Upgrading to Premium
 
 Premium unlocks unlimited audits, sprint auditing, and exact risk scores.
 
-👉 See pricing and upgrade
+[👉 See pricing and upgrade](https://jira-ai-auditor.vercel.app)
 
 After checkout, you'll receive your Premium activation instructions by email within 24 hours.
 
@@ -91,13 +91,13 @@ Beta Program
 
 We're looking for engineering managers and PMs to test this tool on real projects.
 
-👉 Request Free Beta Access
+[👉 Request Free Beta Access](https://forms.gle/Dke3uW3xbYzd5ahJ7)
 
 Support this project
 
 If this tool is useful to you, a ⭐ on this repo genuinely helps — it's how other people find it.
 
-👉 Support the development on Ko-fi
+[👉 Support the development on Ko-fi](https://ko-fi.com/avtandilabuashvili44)
 
 License
 
