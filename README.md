@@ -83,7 +83,7 @@ Upgrading to Premium
 
 Premium unlocks unlimited audits, sprint auditing, and exact risk scores.
 
-[👉 See pricing and upgrade](https://jira-ai-auditor.vercel.app)
+[👉 See pricing and upgrade](https://jira-ai-auditor-site-1jj5m07mc.vercel.app)
 
 After checkout, you'll receive your Premium activation instructions by email within 24 hours.
 
