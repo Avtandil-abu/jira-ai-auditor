@@ -83,9 +83,9 @@ Upgrading to Premium
 
 Premium unlocks unlimited audits, sprint auditing, and exact risk scores.
 
-👉 Request Premium Access
+👉 See pricing and upgrade
 
-After your request is approved, you'll receive activation instructions directly.
+After checkout, you'll receive your Premium activation instructions by email within 24 hours.
 
 Beta Program
 
